@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hotel MoonStar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0b0d;
+      --surface:#0f1114;
+      --muted:#9aa0a6;
+      --gold1:#d4af37;
+      --gold2:#ffcc66;
+      --accent: linear-gradient(90deg,var(--gold1),var(--gold2));
+      --glass: rgba(255,255,255,0.03);
+      --card-radius:16px;
+      --shadow: 0 10px 30px rgba(2,6,23,0.6);
+      --maxw:1200px;
+      --gap:20px;
+      --ff-heading: 'Playfair Display', serif;
+      --ff-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    
+    *{box-sizing:border-box}
+    html,body{height:100%; margin:0;}
+    
+    body{
+      background:radial-gradient(1200px 600px at 10% 10%, rgba(212,175,55,0.06), transparent 6%),
+                radial-gradient(1000px 500px at 95% 90%, rgba(255,204,102,0.04), transparent 8%),
+                var(--bg);
+      color:#e8e6e3;
+      font-family:var(--ff-ui);
+      -webkit-font-smoothing:antialiased;
+      padding:32px;
+      display:flex;
+      justify-content:center;
+      min-height:100vh;
+    }
+
+    .container{
+      width:100%;
+      max-width:var(--maxw);
+      display:grid;
+      grid-template-columns:1fr;
+      gap:var(--gap);
+    }
+
+    /* Header */
+    .menu-head{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      margin-bottom:20px;
+    }
+    
+    .title{
+      font-family:var(--ff-heading);
+      font-size:28px;
+      margin:0;
+    }
+    
+    .subtitle{
+      color:var(--muted);
+      font-size:14px;
+      margin:0;
+    }
+    
+    .gold-line{
+      height:4px;
+      border-radius:999px;
+      background:linear-gradient(90deg,var(--gold1),var(--gold2));
+      box-shadow:0 8px 30px rgba(212,175,55,0.08);
+      margin-top:6px;
+    }
+
+    /* Controls */
+    .controls{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+    
+    .search{
+      background:var(--glass);
+      backdrop-filter:blur(6px);
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.03);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      width:100%;
+    }
+    
+    .search input{
+      background:transparent;
+      border:0;
+      outline:0;
+      color:inherit;
+      font-size:14px;
+      width:100%;
+    }
+
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    
+    .tab{
+      padding:8px 14px;
+      border-radius:999px;
+      background:transparent;
+      border:1px solid rgba(255,255,255,0.03);
+      font-size:13px;
+      color:var(--muted);
+      cursor:pointer;
+      transition:all 0.2s ease;
+    }
+    
+    .tab.active{
+      background:var(--accent);
+      color:#0b0b0d;
+      border:none;
+      box-shadow:0 8px 30px rgba(212,175,55,0.12);
+    }
+
+    /* Menu Grid */
+    .menu-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));
+      gap:18px;
+    }
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+      border-radius:12px;
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      border:1px solid rgba(255,255,255,0.03);
+      box-shadow:0 8px 24px rgba(2,6,23,0.6);
+      transition:transform .28s cubic-bezier(.2,.9,.2,1),box-shadow .28s;
+    }
+    
+    .card:hover{
+      transform:translateY(-8px);
+      box-shadow:0 20px 40px rgba(2,6,23,0.7);
+    }
+
+    .thumb{
+      width:100%;
+      height:160px;
+      border-radius:10px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    
+    .thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      transition:transform .4s;
+    }
+    
+    .card:hover .thumb img{
+      transform:scale(1.06);
+    }
+
+    .info{
+      flex:1;
+    }
+    
+    .dish{
+      font-size:16px;
+      font-weight:600;
+      margin:0;
+      font-family:var(--ff-heading);
+    }
+    
+    .dish-english {
+      font-size:14px;
+      color:var(--muted);
+      margin:4px 0 0 0;
+      font-style:italic;
+    }
+    
+    .desc{
+      color:var(--muted);
+      font-size:13px;
+      margin:6px 0;
+    }
+    
+    .meta-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-top:12px;
+    }
+    
+    .price{
+      font-weight:700;
+      font-size:16px;
+      color:var(--gold2);
+    }
+    
+    .tags{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    
+    .pill{
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.03);
+      font-size:12px;
+      color:var(--muted);
+      background:transparent;
+    }
+
+    /* Buttons */
+    .btn-primary{
+      background:linear-gradient(90deg,var(--gold1),var(--gold2));
+      border:none;
+      padding:12px 18px;
+      border-radius:12px;
+      color:#0b0b0d;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow:0 8px 30px rgba(212,175,55,0.12);
+      transition:all 0.2s ease;
+    }
+    
+    .btn-primary:hover{
+      transform:translateY(-2px);
+      box-shadow:0 12px 30px rgba(212,175,55,0.2);
+    }
+    
+    .btn-ghost{
+      background:transparent;
+      border:1px solid rgba(255,255,255,0.04);
+      padding:10px 14px;
+      border-radius:12px;
+      color:var(--muted);
+      cursor:pointer;
+      transition:all 0.2s ease;
+    }
+    
+    .btn-ghost:hover{
+      background:rgba(255,255,255,0.05);
+    }
+
+    /* Cart styles */
+    .cart-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 100;
+    }
+    
+    .cart-button {
+      background: linear-gradient(90deg,var(--gold1),var(--gold2));
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 30px rgba(212,175,55,0.12);
+      cursor: pointer;
+      position: relative;
+      border: none;
+      transition: all 0.2s ease;
+    }
+    
+    .cart-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 30px rgba(212,175,55,0.2);
+    }
+    
+    .cart-count {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #e74c3c;
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    
+    .cart-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(11, 11, 13, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .cart-modal.open {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .cart-content {
+      background: var(--surface);
+      width: 90%;
+      max-width: 500px;
+      border-radius: var(--card-radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.03);
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      padding-bottom: 12px;
+    }
+    
+    .cart-title {
+      font-family: var(--ff-heading);
+      font-size: 22px;
+      margin: 0;
+      color: var(--gold2);
+    }
+    
+    .close-cart {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 24px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .close-cart:hover {
+      color: white;
+    }
+    
+    .cart-items {
+      margin-bottom: 20px;
+    }
+    
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    
+    .item-info {
+      flex: 1;
+    }
+    
+    .item-name {
+      font-weight: 600;
+      margin: 0 0 4px 0;
+    }
+    
+    .item-price {
+      color: var(--gold2);
+      font-size: 14px;
+    }
+    
+    .item-quantity {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .quantity-btn {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.03);
+      color: var(--muted);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .quantity-btn:hover {
+      background: rgba(255,255,255,0.08);
+    }
+    
+    .quantity {
+      font-weight: 600;
+    }
+    
+    .remove-item {
+      background: transparent;
+      border: none;
+      color: #e74c3c;
+      cursor: pointer;
+      margin-left: 12px;
+      transition: all 0.2s ease;
+    }
+    
+    .remove-item:hover {
+      transform: scale(1.1);
+    }
+    
+    .cart-empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 20px 0;
+    }
+    
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-top: 1px solid rgba(255,255,255,0.03);
+      font-weight: 600;
+      font-size: 18px;
+    }
+    
+    .total-amount {
+      color: var(--gold2);
+    }
+    
+    .cart-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    
+    .btn-whatsapp {
+      background: #25D366;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 12px;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-whatsapp:hover {
+      background: #128C7E;
+      transform: translateY(-2px);
+    }
+    
+    .btn-clear {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.04);
+      padding: 10px 14px;
+      border-radius: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .btn-clear:hover {
+      background: rgba(255,255,255,0.05);
+    }
+
+    /* Responsive */
+    @media (min-width: 768px) {
+      .controls {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      
+      .search {
+        width: 300px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 16px;
+      }
+      
+      .menu-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .cart-content {
+        width: 95%;
+        padding: 16px;
+      }
+    }
+
+    /* Print styles */
+    @media print {
+      body {
+        background: white;
+        color: black;
+      }
+      
+      .cart-container {
+        display: none;
+      }
+      
+      .btn-primary {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <main class="menu">
+      <div class="menu-head">
+        <div>
+          <h2 class="title">Hotel MoonStar</h2>
+          <div class="subtitle"> • The King Of Biryani — </div>
+          <div class="gold-line"></div>
+        </div>
+
+        <div class="controls">
+          <div class="search" role="search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path d="M21 21l-4.35-4.35" stroke="rgba(255,255,255,0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+              <circle cx="11" cy="11" r="6" stroke="rgba(255,255,255,0.6)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></circle>
+            </svg>
+            <input id="search" placeholder="Search dishes, ingredients..." />
+          </div>
+
+          <div class="tabs" role="tablist">
+            <button class="tab active" data-cat="all">All</button>
+            <button class="tab" data-cat="starter">Starter</button>
+            <button class="tab" data-cat="chicken">Chicken Handi</button>
+            <button class="tab" data-cat="mutton">🐑 Mutton Handi</button>
+            <button class="tab" data-cat="egg">🥚 Egg Handi</button>
+            <button class="tab" data-cat="veg">🥦 Veg Handi</button>
+            <button class="tab" data-cat="egg_items">🥚 Egg Items</button>
+            <button class="tab" data-cat="biryani">🍚 Biryani</button>
+            <button class="tab" data-cat="rice">🍚 Rice Items</button>
+            <button class="tab" data-cat="breads">🍞 Breads</button>
+            <button class="tab" data-cat="thali">🍛 Thali</button>
+          </div>
+        </div>
+      </div>
+
+      <section class="menu-grid" id="menuGrid">
+        <!-- Cards injected by JS -->
+      </section>
+
+      <div style="display:flex;justify-content:flex-end;margin-top:20px">
+        <button class="btn-ghost" onclick="window.print()">Print Menu</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- Cart Button -->
+  <div class="cart-container">
+    <button class="cart-button" id="cartButton">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <path d="M16 10a4 4 0 0 1-8 0"></path>
+      </svg>
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+
+  <!-- Cart Modal -->
+  <div class="cart-modal" id="cartModal">
+    <div class="cart-content">
+      <div class="cart-header">
+        <h3 class="cart-title">Your Order</h3>
+        <button class="close-cart" id="closeCart">&times;</button>
+      </div>
+      
+      <div class="cart-items" id="cartItems">
+        <div class="cart-empty" id="cartEmpty">Your cart is empty</div>
+      </div>
+      
+      <div class="cart-total">
+        <span>Total:</span>
+        <span class="total-amount" id="cartTotal">₹0</span>
+      </div>
+      
+      <div class="cart-actions">
+        <button class="btn-clear" id="clearCart">Clear Cart</button>
+        <button class="btn-whatsapp" id="whatsappOrder">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.864 3.488"/>
+          </svg>
+          Order via WhatsApp
+        </button>
+      </div>
+    </div> 
+  </div>
+
+  <script>
+    // Complete menu data with both Hindi and English names
+    const data = [
+      {id:1, cat:'starter', hindiName:'चिकन टंडूरी प्लैटर', englishName:'Chicken Tandoori Platter', desc:'Half portion', price:'₹550', tags:['Half'], img:'img/chicken-tandoori-platter.jpg'},
+      {id:2, cat:'starter', hindiName:'चिकन टंडूरी प्लैटर', englishName:'Chicken Tandoori Platter', desc:'Full portion', price:'₹1100', tags:['Full'], img:'img/chicken-tandoori-platter.jpg'},
+      {id:3, cat:'starter', hindiName:'मून स्टार स्पेशल चिकन टंडूरी', englishName:'Moon Star Spl. Chicken Tandoori', desc:'Half portion', price:'₹280', tags:['Half'], img:'img/moon-star-chicken-tandoori.jpg'},
+      {id:4, cat:'starter', hindiName:'मून स्टार स्पेशल चिकन टंडूरी', englishName:'Moon Star Spl. Chicken Tandoori', desc:'Full portion', price:'₹500', tags:['Full'], img:'img/moon-star-chicken-tandoori.jpg'},
+      {id:5, cat:'starter', hindiName:'चिकन कबाब प्लैटर', englishName:'Chicken Kabab Platter', desc:'Half portion', price:'₹350', tags:['Half'], img:'img/chicken-kabab-platter.jpg'},
+      {id:6, cat:'starter', hindiName:'चिकन कबाब प्लैटर', englishName:'Chicken Kabab Platter', desc:'Full portion', price:'₹600', tags:['Full'], img:'img/chicken-kabab-platter.jpg'},
+      {id:7, cat:'starter', hindiName:'चिकन टंडूरी', englishName:'Chicken Tandoori', desc:'Half portion', price:'₹230', tags:['Half'], img:'img/chicken-tandoori.jpg'},
+      {id:8, cat:'starter', hindiName:'चिकन टंडूरी', englishName:'Chicken Tandoori', desc:'Full portion', price:'₹420', tags:['Full'], img:'img/chicken-tandoori.jpg'},
+      {id:9, cat:'starter', hindiName:'चिकन मलाई कबाब', englishName:'Chicken Malai Kabab', desc:'8 pieces', price:'₹220', tags:['8 Piece'], img:'img/chicken-malai-kabab.jpg'},
+      {id:10, cat:'starter', hindiName:'चिकन पहाड़ी कबाब', englishName:'Chicken Pahadi Kabab', desc:'8 pieces', price:'₹200', tags:['8 Piece'], img:'img/chicken-pahadi-kabab.jpg'},
+      {id:11, cat:'starter', hindiName:'चिकन टंडूरी कबाब', englishName:'Chicken Tandoori Kabab', desc:'8 pieces', price:'₹200', tags:['8 Piece'], img:'img/chicken-tandoori-kabab.jpg'},
+      {id:12, cat:'starter', hindiName:'चिकन 65', englishName:'Chicken 65', desc:'200 grams', price:'₹100', tags:['200 Gm'], img:'img/chicken-65.jpg'},
+      {id:13, cat:'chicken', hindiName:'चिकन मसाला हंडी', englishName:'Chicken Masala Handi', desc:'Half portion', price:'₹350', tags:['Half','Handi'], img:'img/chicken-masala-handi.jpg'},
+      {id:14, cat:'chicken', hindiName:'चिकन मसाला हंडी', englishName:'Chicken Masala Handi', desc:'Full portion', price:'₹550', tags:['Full','Handi'], img:'img/chicken-masala-handi.jpg'},
+      {id:15, cat:'chicken', hindiName:'चिकन मालवनी हंडी', englishName:'Chicken Malvani Handi', desc:'Half portion', price:'₹400', tags:['Half','Handi'], img:'img/chicken-malvani-handi.jpg'},
+      {id:16, cat:'chicken', hindiName:'चिकन मालवनी हंडी', englishName:'Chicken Malvani Handi', desc:'Full portion', price:'₹600', tags:['Full','Handi'], img:'img/chicken-malvani-handi.jpg'},
+      {id:17, cat:'chicken', hindiName:'चिकन मुगलई हंडी', englishName:'Chicken Moglai Handi', desc:'Half portion', price:'₹400', tags:['Half','Handi'], img:'img/chicken-moglai-handi.jpg'},
+      {id:18, cat:'chicken', hindiName:'चिकन मुगलई हंडी', englishName:'Chicken Moglai Handi', desc:'Full portion', price:'₹600', tags:['Full','Handi'], img:'img/chicken-moglai-handi.jpg'},
+      {id:19, cat:'chicken', hindiName:'बटर चिकन हंडी', englishName:'Butter Chicken Handi', desc:'Half portion', price:'₹400', tags:['Half','Handi'], img:'img/butter-chicken-handi.jpg'},
+      {id:20, cat:'chicken', hindiName:'बटर चिकन हंडी', englishName:'Butter Chicken Handi', desc:'Full portion', price:'₹600', tags:['Full','Handi'], img:'img/butter-chicken-handi.jpg'},
+      {id:21, cat:'chicken', hindiName:'टंडूरी बटर चिकन हंडी', englishName:'Tandoori Butter Chicken Handi', desc:'Half portion', price:'₹450', tags:['Half','Handi'], img:'img/tandoori-butter-chicken-handi.jpg'},
+      {id:22, cat:'chicken', hindiName:'टंडूरी बटर चिकन हंडी', englishName:'Tandoori Butter Chicken Handi', desc:'Full portion', price:'₹700', tags:['Full','Handi'], img:'img/tandoori-butter-chicken-handi.jpg'},
+      {id:23, cat:'chicken', hindiName:'चिकन कोल्हापुरी हंडी', englishName:'Chicken Kolhapuri Handi', desc:'Half portion', price:'₹400', tags:['Half','Handi'], img:'img/chicken-kolhapuri-handi.jpg'},
+      {id:24, cat:'chicken', hindiName:'चिकन कोल्हापुरी हंडी', englishName:'Chicken Kolhapuri Handi', desc:'Full portion', price:'₹600', tags:['Full','Handi'], img:'img/chicken-kolhapuri-handi.jpg'},
+      {id:25, cat:'chicken', hindiName:'चिकन दाल गोश्त हंडी', englishName:'Chicken Dal Gosht Handi', desc:'Half portion', price:'₹400', tags:['Half','Handi'], img:'img/chicken-dal-gosht-handi.jpg'},
+      {id:26, cat:'chicken', hindiName:'चिकन दाल गोश्त हंडी', englishName:'Chicken Dal Gosht Handi', desc:'Full portion', price:'₹600', tags:['Full','Handi'], img:'img/chicken-dal-gosht-handi.jpg'},
+      {id:27, cat:'chicken', hindiName:'चिकन टांगड़ी', englishName:'Chicken Tangadi', desc:'1 piece', price:'₹170', tags:['1 Piece'], img:'img/chicken-tangadi.jpg'},
+      {id:28, cat:'mutton', hindiName:'मटन मसाला हंडी', englishName:'Mutton Masala Handi', desc:'Half portion', price:'₹450', tags:['Half','Handi'], img:'img/mutton-masala-handi.jpg'},
+      {id:29, cat:'mutton', hindiName:'मटन मसाला हंडी', englishName:'Mutton Masala Handi', desc:'Full portion', price:'₹800', tags:['Full','Handi'], img:'img/mutton-masala-handi.jpg'},
+      {id:30, cat:'mutton', hindiName:'मटन मालवनी हंडी', englishName:'Mutton Malvani Handi', desc:'Half portion', price:'₹480', tags:['Half','Handi'], img:'img/mutton-malvani-handi.jpg'},
+      {id:31, cat:'mutton', hindiName:'मटन मालवनी हंडी', englishName:'Mutton Malvani Handi', desc:'Full portion', price:'₹850', tags:['Full','Handi'], img:'img/mutton-malvani-handi.jpg'},
+      {id:32, cat:'mutton', hindiName:'मटन कोल्हापुरी हंडी', englishName:'Mutton Kolhapuri Handi', desc:'Half portion', price:'₹480', tags:['Half','Handi'], img:'img/mutton-kolhapuri-handi.jpg'},
+      {id:33, cat:'mutton', hindiName:'मटन कोल्हापुरी हंडी', englishName:'Mutton Kolhapuri Handi', desc:'Full portion', price:'₹850', tags:['Full','Handi'], img:'img/mutton-kolhapuri-handi.jpg'},
+      {id:34, cat:'mutton', hindiName:'मटन दाल गोश्त हंडी', englishName:'Mutton Dal Gosht Handi', desc:'Half portion', price:'₹480', tags:['Half','Handi'], img:'img/mutton-dal-gosht-handi.jpg'},
+      {id:35, cat:'mutton', hindiName:'मटन दाल गोश्त हंडी', englishName:'Mutton Dal Gosht Handi', desc:'Full portion', price:'₹850', tags:['Full','Handi'], img:'img/mutton-dal-gosht-handi.jpg'},
+      {id:36, cat:'mutton', hindiName:'मटन फ्राय हंडी', englishName:'Mutton Fry Handi', desc:'Half portion', price:'₹480', tags:['Half','Handi'], img:'img/mutton-fry-handi.jpg'},
+      {id:37, cat:'mutton', hindiName:'मटन फ्राय हंडी', englishName:'Mutton Fry Handi', desc:'Full portion', price:'₹850', tags:['Full','Handi'], img:'img/mutton-fry-handi.jpg'},
+      {id:38, cat:'mutton', hindiName:'मटन कीमा हंडी', englishName:'Mutton Kheema Handi', desc:'Half portion', price:'₹480', tags:['Half','Handi'], img:'img/mutton-kheema-handi.jpg'},
+      {id:39, cat:'mutton', hindiName:'मटन कीमा हंडी', englishName:'Mutton Kheema Handi', desc:'Full portion', price:'₹850', tags:['Full','Handi'], img:'img/mutton-kheema-handi.jpg'},
+      {id:40, cat:'egg', hindiName:'अंडा मसाला हंडी', englishName:'Egg Masala Handi', desc:'Half portion', price:'₹280', tags:['Half','Handi'], img:'img/egg-masala-handi.jpg'},
+      {id:41, cat:'egg', hindiName:'अंडा मसाला हंडी', englishName:'Egg Masala Handi', desc:'Full portion', price:'₹450', tags:['Full','Handi'], img:'img/egg-masala-handi.jpg'},
+      {id:42, cat:'egg', hindiName:'अंडा कोल्हापुरी हंडी', englishName:'Egg Kolhapuri Handi', desc:'Half portion', price:'₹300', tags:['Half','Handi'], img:'img/egg-kolhapuri-handi.jpg'},
+      {id:43, cat:'egg', hindiName:'अंडा कोल्हापुरी हंडी', englishName:'Egg Kolhapuri Handi', desc:'Full portion', price:'₹500', tags:['Full','Handi'], img:'img/egg-kolhapuri-handi.jpg'},
+      {id:44, cat:'egg', hindiName:'अंडा दाल हंडी', englishName:'Egg Dal Handi', desc:'Half portion', price:'₹300', tags:['Half','Handi'], img:'img/egg-dal-handi.jpg'},
+      {id:45, cat:'egg', hindiName:'अंडा दाल हंडी', englishName:'Egg Dal Handi', desc:'Full portion', price:'₹500', tags:['Full','Handi'], img:'img/egg-dal-handi.jpg'},
+      {id:46, cat:'egg', hindiName:'अंडा मक्खनवाला हंडी', englishName:'Egg Makkhanwala Handi', desc:'Half portion', price:'₹300', tags:['Half','Handi'], img:'img/egg-makkhanwala-handi.jpg'},
+      {id:47, cat:'egg', hindiName:'अंडा मक्खनवाला हंडी', englishName:'Egg Makkhanwala Handi', desc:'Full portion', price:'₹500', tags:['Full','Handi'], img:'img/egg-makkhanwala-handi.jpg'},
+      {id:48, cat:'veg', hindiName:'काजू मसाला हंडी', englishName:'Kaju Masala Handi', desc:'Cashew masala handi', price:'₹300', tags:['Handi','Veg'], img:'img/kaju-masala-handi.jpg'},
+      {id:49, cat:'veg', hindiName:'पनीर मसाला हंडी', englishName:'Paneer Masala Handi', desc:'Paneer masala handi', price:'₹300', tags:['Handi','Veg'], img:'img/paneer-masala-handi.jpg'},
+      {id:50, cat:'veg', hindiName:'काजू पनीर मसाला हंडी', englishName:'Kaju Paneer Masala Handi', desc:'Cashew and paneer masala handi', price:'₹350', tags:['Handi','Veg'], img:'img/kaju-paneer-masala-handi.jpg'},
+      {id:51, cat:'egg', hindiName:'अंडा ऑमलेट (डबल)', englishName:'Egg Omelette (Double)', desc:'Double egg omelette', price:'₹60', tags:['Omelette'], img:'img/egg-omelette-double.jpg'},
+      {id:52, cat:'egg', hindiName:'अंडा भुर्जी', englishName:'Egg Bhurji', desc:'Scrambled eggs', price:'₹70', tags:['Bhurji'], img:'img/egg-bhurji.jpg'},
+      {id:53, cat:'egg', hindiName:'अंडा हाफ फ्राय', englishName:'Egg Half Fry', desc:'Half fried eggs', price:'₹40', tags:['Fry'], img:'img/egg-half-fry.jpg'},
+      {id:54, cat:'egg', hindiName:'अंडा बॉयल प्लेट (2 बॉयल्ड)', englishName:'Egg Boil Plate (2 boiled)', desc:'2 boiled eggs plate', price:'₹30', tags:['Boiled'], img:'img/egg-boil-plate.jpg'},
+      {id:55, cat:'biryani', hindiName:'चिकन दम बिरयानी (मिनी)', englishName:'Chicken Dum Biryani (Mini)', desc:'Mini portion', price:'₹120', tags:['Mini'], img:'img/chicken-dum-biryani-mini.jpg'},
+      {id:56, cat:'biryani', hindiName:'चिकन दम बिरयानी (1 व्यक्ति)', englishName:'Chicken Dum Biryani (1 Person)', desc:'1 person portion', price:'₹190', tags:['1 Person'], img:'img/chicken-dum-biryani.jpg'},
+      {id:57, cat:'biryani', hindiName:'चिकन दम बिरयानी (2 व्यक्ति)', englishName:'Chicken Dum Biryani (2 Persons)', desc:'2 persons portion', price:'₹360', tags:['2 Persons'], img:'img/chicken-dum-biryani.jpg'},
+      {id:58, cat:'biryani', hindiName:'चिकन दम बिरयानी (3 व्यक्ति)', englishName:'Chicken Dum Biryani (3 Persons)', desc:'3 persons portion', price:'₹540', tags:['3 Persons'], img:'img/chicken-dum-biryani.jpg'},
+      {id:59, cat:'biryani', hindiName:'चिकन दम बिरयानी (4 व्यक्ति)', englishName:'Chicken Dum Biryani (4 Persons)', desc:'4 persons portion', price:'₹720', tags:['4 Persons'], img:'img/chicken-dum-biryani.jpg'},
+      {id:60, cat:'biryani', hindiName:'चिकन दम बिरयानी (5 व्यक्ति)', englishName:'Chicken Dum Biryani (5 Persons)', desc:'5 persons portion', price:'₹900', tags:['5 Persons'], img:'img/chicken-dum-biryani.jpg'},
+      {id:61, cat:'biryani', hindiName:'चिकन 1 किलो बिरयानी (6-7 व्यक्ति)', englishName:'Chicken 1 Kg. Biryani (6 to 7 Persons)', desc:'6-7 persons portion', price:'₹1200', tags:['1 Kg'], img:'img/chicken-1kg-biryani.jpg'},
+      {id:62, cat:'biryani', hindiName:'चिकन स्मॉल हंडी बिरयानी (20 व्यक्ति)', englishName:'Chicken Small Handi Biryani (20 Persons)', desc:'20 persons portion', price:'₹3600', tags:['Handi','20 Persons'], img:'img/chicken-handi-biryani.jpg'},
+      {id:63, cat:'biryani', hindiName:'चिकन लार्ज हंडी बिरयानी (30-35 व्यक्ति)', englishName:'Chicken Large Handi Biryani (30 to 35 Persons)', desc:'30-35 persons portion', price:'₹6000', tags:['Handi','30-35 Persons'], img:'img/chicken-handi-biryani.jpg'},
+      {id:64, cat:'biryani', hindiName:'मटन दम बिरयानी (मिनी)', englishName:'Mutton Dum Biryani (Mini)', desc:'Mini portion', price:'₹180', tags:['Mini'], img:'img/mutton-dum-biryani-mini.jpg'},
+      {id:65, cat:'biryani', hindiName:'मटन दम बिरयानी (1 व्यक्ति)', englishName:'Mutton Dum Biryani (1 Person)', desc:'1 person portion', price:'₹260', tags:['1 Person'], img:'img/mutton-dum-biryani.jpg'},
+      {id:66, cat:'biryani', hindiName:'मटन दम बिरयानी (2 व्यक्ति)', englishName:'Mutton Dum Biryani (2 Persons)', desc:'2 persons portion', price:'₹500', tags:['2 Persons'], img:'img/mutton-dum-biryani.jpg'},
+      {id:67, cat:'biryani', hindiName:'मटन दम बिरयानी (3 व्यक्ति)', englishName:'Mutton Dum Biryani (3 Persons)', desc:'3 persons portion', price:'₹740', tags:['3 Persons'], img:'img/mutton-dum-biryani.jpg'},
+      {id:68, cat:'biryani', hindiName:'मटन दम बिरयानी (4 व्यक्ति)', englishName:'Mutton Dum Biryani (4 Persons)', desc:'4 persons portion', price:'₹1000', tags:['4 Persons'], img:'img/mutton-dum-biryani.jpg'},
+      {id:69, cat:'biryani', hindiName:'मटन दम बिरयानी (5 व्यक्ति)', englishName:'Mutton Dum Biryani (5 Persons)', desc:'5 persons portion', price:'₹1250', tags:['5 Persons'], img:'img/mutton-dum-biryani.jpg'},
+      {id:70, cat:'biryani', hindiName:'मटन 1 किलो बिरयानी (6-7 व्यक्ति)', englishName:'Mutton 1 Kg. Biryani (6 to 7 Persons)', desc:'6-7 persons portion', price:'₹1600', tags:['1 Kg'], img:'img/mutton-1kg-biryani.jpg'},
+      {id:71, cat:'biryani', hindiName:'मटन स्मॉल हंडी बिरयानी (20 व्यक्ति)', englishName:'Mutton Small Handi Biryani (20 Persons)', desc:'20 persons portion', price:'₹4800', tags:['Handi','20 Persons'], img:'img/mutton-handi-biryani.jpg'},
+      {id:72, cat:'biryani', hindiName:'मटन लार्ज हंडी बिरयानी (30-35 व्यक्ति)', englishName:'Mutton Large Handi Biryani (30 to 35 Persons)', desc:'30-35 persons portion', price:'₹8000', tags:['Handi','30-35 Persons'], img:'img/mutton-handi-biryani.jpg'},
+      {id:73, cat:'biryani', hindiName:'अंडा दम बिरयानी (हाफ/फुल)', englishName:'Egg Dum Biryani (H/F)', desc:'Half/Full portion', price:'₹100 / ₹170', tags:['H/F'], img:'img/egg-dum-biryani.jpg'},
+      {id:74, cat:'biryani', hindiName:'अंडा दम बिरयानी (2 व्यक्ति)', englishName:'Egg Dum Biryani (2 Persons)', desc:'2 persons portion', price:'₹340', tags:['2 Persons'], img:'img/egg-dum-biryani.jpg'},
+      {id:75, cat:'biryani', hindiName:'अंडा दम बिरयानी (3 व्यक्ति)', englishName:'Egg Dum Biryani (3 Persons)', desc:'3 persons portion', price:'₹500', tags:['3 Persons'], img:'img/egg-dum-biryani.jpg'},
+      {id:76, cat:'biryani', hindiName:'अंडा दम बिरयानी (4 व्यक्ति)', englishName:'Egg Dum Biryani (4 Persons)', desc:'4 persons portion', price:'₹670', tags:['4 Persons'], img:'img/egg-dum-biryani.jpg'},
+      {id:77, cat:'biryani', hindiName:'अंडा दम बिरयानी (5 व्यक्ति)', englishName:'Egg Dum Biryani (5 Persons)', desc:'5 persons portion', price:'₹840', tags:['5 Persons'], img:'img/egg-dum-biryani.jpg'},
+      {id:78, cat:'rice', hindiName:'चिकन दालचा राइस', englishName:'Chicken Dalcha Rice', desc:'Chicken dalcha with rice', price:'₹190', tags:['Dalcha'], img:'img/chicken-dalcha-rice.jpg'},
+      {id:79, cat:'rice', hindiName:'मटन दालचा राइस', englishName:'Mutton Dalcha Rice', desc:'Mutton dalcha with rice', price:'₹260', tags:['Dalcha'], img:'img/mutton-dalcha-rice.jpg'},
+      {id:80, cat:'rice', hindiName:'वेज दालचा राइस', englishName:'Veg Dalcha Rice', desc:'Vegetable dalcha with rice', price:'₹100', tags:['Dalcha','Veg'], img:'img/veg-dalcha-rice.jpg'},
+      {id:81, cat:'breads', hindiName:'तंदूरी रोटी', englishName:'Tandoori Roti', desc:'Tandoor baked roti', price:'₹20', tags:['Roti'], img:'img/tandoori-roti.jpg'},
+      {id:82, cat:'breads', hindiName:'बटर रोटी', englishName:'Butter Roti', desc:'Buttered roti', price:'₹25', tags:['Roti'], img:'img/butter-roti.jpg'},
+      {id:83, cat:'breads', hindiName:'पराठा', englishName:'Paratha', desc:'Stuffed paratha', price:'₹30', tags:['Paratha'], img:'img/paratha.jpg'},
+      {id:84, cat:'breads', hindiName:'चपाती', englishName:'Chapati', desc:'Whole wheat chapati', price:'₹15', tags:['Chapati'], img:'img/chapati.jpg'},
+      {id:85, cat:'thali', hindiName:'मूनस्टार चिकन थाली', englishName:'Moonstar Chicken Thali', desc:'Special chicken thali', price:'₹350', tags:['Thali','Chicken'], img:'img/moonstar-chicken-thali.jpg'},
+      {id:86, cat:'thali', hindiName:'स्पेशल चिकन थाली', englishName:'Special Chicken Thali', desc:'Special chicken thali', price:'₹270', tags:['Thali','Chicken'], img:'img/special-chicken-thali.jpg'},
+      {id:87, cat:'thali', hindiName:'चिकन टांगड़ी थाली', englishName:'Chicken Tangadi Thali', desc:'Chicken leg piece thali', price:'₹240', tags:['Thali','Chicken'], img:'img/chicken-tangadi-thali.jpg'},
+      {id:88, cat:'thali', hindiName:'चिकन मालवनी थाली', englishName:'Chicken Malvani Thali', desc:'Malvani style chicken thali', price:'₹230', tags:['Thali','Chicken'], img:'img/chicken-malvani-thali.jpg'},
+      {id:89, cat:'thali', hindiName:'चिकन मुगलई थाली', englishName:'Chicken Mogalai Thali', desc:'Mughlai style chicken thali', price:'₹230', tags:['Thali','Chicken'], img:'img/chicken-mogalai-thali.jpg'},
+      {id:90, cat:'thali', hindiName:'बटर चिकन थाली', englishName:'Butter Chicken Thali', desc:'Butter chicken thali', price:'₹230', tags:['Thali','Chicken'], img:'img/butter-chicken-thali.jpg'},
+      {id:91, cat:'thali', hindiName:'चिकन कोल्हापुरी थाली', englishName:'Chicken Kolhapuri Thali', desc:'Kolhapuri style chicken thali', price:'₹230', tags:['Thali','Chicken'], img:'img/chicken-kolhapuri-thali.jpg'},
+      {id:92, cat:'thali', hindiName:'चिकन दाल गोश्त थाली', englishName:'Chicken Dal Gosht Thali', desc:'Chicken with lentils thali', price:'₹230', tags:['Thali','Chicken'], img:'img/chicken-dal-gosht-thali.jpg'},
+      {id:93, cat:'thali', hindiName:'चिकन धनगरी थाली', englishName:'Chicken Dhangari Thali', desc:'Dhangari style chicken thali', price:'₹230', tags:['Thali','Chicken'], img:'img/chicken-dhangari-thali.jpg'},
+      {id:94, cat:'thali', hindiName:'चिकन फ्राय थाली', englishName:'Chicken Fry Thali', desc:'Fried chicken thali', price:'₹200', tags:['Thali','Chicken'], img:'img/chicken-fry-thali.jpg'},
+      {id:95, cat:'thali', hindiName:'चिकन मसाला थाली', englishName:'Chicken Masala Thali', desc:'Chicken masala thali', price:'₹200', tags:['Thali','Chicken'], img:'img/chicken-masala-thali.jpg'},
+      {id:96, cat:'thali', hindiName:'मूनस्टार मटन थाली', englishName:'Moonstar Mutton Thali', desc:'Special mutton thali', price:'₹450', tags:['Thali','Mutton'], img:'img/moonstar-mutton-thali.jpg'},
+      {id:97, cat:'thali', hindiName:'स्पेशल मटन थाली', englishName:'Special Mutton Thali', desc:'Special mutton thali', price:'₹350', tags:['Thali','Mutton'], img:'img/special-mutton-thali.jpg'},
+      {id:98, cat:'thali', hindiName:'मटन मालवनी थाली', englishName:'Mutton Malvani Thali', desc:'Malvani style mutton thali', price:'₹290', tags:['Thali','Mutton'], img:'img/mutton-malvani-thali.jpg'},
+      {id:99, cat:'thali', hindiName:'मटन कोल्हापुरी थाली', englishName:'Mutton Kolhapuri Thali', desc:'Kolhapuri style mutton thali', price:'₹290', tags:['Thali','Mutton'], img:'img/mutton-kolhapuri-thali.jpg'},
+      {id:100, cat:'thali', hindiName:'मटन दाल गोश्त थाली', englishName:'Mutton Dal Gosht Thali', desc:'Mutton with lentils thali', price:'₹290', tags:['Thali','Mutton'], img:'img/mutton-dal-gosht-thali.jpg'},
+      {id:101, cat:'thali', hindiName:'मटन धनगरी थाली', englishName:'Mutton Dhangari Thali', desc:'Dhangari style mutton thali', price:'₹290', tags:['Thali','Mutton'], img:'img/mutton-dhangari-thali.jpg'},
+      {id:102, cat:'thali', hindiName:'मटन फ्राय थाली', englishName:'Mutton Fry Thali', desc:'Fried mutton thali', price:'₹290', tags:['Thali','Mutton'], img:'img/mutton-fry-thali.jpg'},
+      {id:103, cat:'thali', hindiName:'मटन मसाला थाली', englishName:'Mutton Masala Thali', desc:'Mutton masala thali', price:'₹290', tags:['Thali','Mutton'], img:'img/mutton-masala-thali.jpg'},
+      {id:104, cat:'thali', hindiName:'मटन कीमा थाली', englishName:'Mutton Kheema Thali', desc:'Half portion', price:'₹160', tags:['Thali','Mutton','Half'], img:'img/mutton-kheema-thali.jpg'},
+      {id:105, cat:'thali', hindiName:'मटन कीमा थाली', englishName:'Mutton Kheema Thali', desc:'Full portion', price:'₹240', tags:['Thali','Mutton','Full'], img:'img/mutton-kheema-thali.jpg'},
+      {id:106, cat:'thali', hindiName:'अंडा मसाला/करी थाली', englishName:'Egg Masala/Curry Thali', desc:'Egg masala or curry thali', price:'₹160', tags:['Thali','Egg'], img:'img/egg-masala-thali.jpg'},
+      {id:107, cat:'thali', hindiName:'अंडा कोल्हापुरी थाली', englishName:'Egg Kolhapuri Thali', desc:'Kolhapuri style egg thali', price:'₹160', tags:['Thali','Egg'], img:'img/egg-kolhapuri-thali.jpg'},
+      {id:108, cat:'thali', hindiName:'अंडा फ्राय थाली', englishName:'Egg Fry Thali', desc:'Fried egg thali', price:'₹160', tags:['Thali','Egg'], img:'img/egg-fry-thali.jpg'},
+      {id:109, cat:'thali', hindiName:'अंडा दाल थाली', englishName:'Egg Dal Thali', desc:'Egg with lentils thali', price:'₹160', tags:['Thali','Egg'], img:'img/egg-dal-thali.jpg'},
+      {id:110, cat:'thali', hindiName:'अंडा मक्खनवाला थाली', englishName:'Egg Makkhanwala Thali', desc:'Buttery egg thali', price:'₹160', tags:['Thali','Egg'], img:'img/egg-makkhanwala-thali.jpg'},
+      {id:111, cat:'thali', hindiName:'स्पेशल वेज थाली', englishName:'Special Veg Thali', desc:'Special vegetarian thali', price:'₹220', tags:['Thali','Veg'], img:'img/special-veg-thali.jpg'},
+      {id:112, cat:'thali', hindiName:'काजू मसाला थाली', englishName:'Kaju Masala Thali', desc:'Cashew masala thali', price:'₹220', tags:['Thali','Veg'], img:'img/kaju-masala-thali.jpg'},
+      {id:113, cat:'thali', hindiName:'पनीर मसाला थाली', englishName:'Paneer Masala Thali', desc:'Paneer masala thali', price:'₹220', tags:['Thali','Veg'], img:'img/paneer-masala-thali.jpg'},
+      {id:114, cat:'thali', hindiName:'दालचा राइस थाली', englishName:'Dalcha Rice Thali', desc:'Dalcha rice thali', price:'₹220', tags:['Thali','Veg'], img:'img/dalcha-rice-thali.jpg'}
+    ];
+
+    // Cart functionality
+    let cart = [];
+    const cartButton = document.getElementById('cartButton');
+    const cartCount = document.getElementById('cartCount');
+    const cartModal = document.getElementById('cartModal');
+    const closeCart = document.getElementById('closeCart');
+    const cartItems = document.getElementById('cartItems');
+    const cartEmpty = document.getElementById('cartEmpty');
+    const cartTotal = document.getElementById('cartTotal');
+    const clearCart = document.getElementById('clearCart');
+    const whatsappOrder = document.getElementById('whatsappOrder');
+
+    // Initialize cart from localStorage if available
+    function initCart() {
+      const savedCart = localStorage.getItem('hotelMaiCart');
+      if (savedCart) {
+        cart = JSON.parse(savedCart);
+        updateCartUI();
+      }
+    }
+
+    // Save cart to localStorage
+    function saveCart() {
+      localStorage.setItem('hotelMaiCart', JSON.stringify(cart));
+    }
+
+    // Add item to cart
+    function addItemToCart(item) {
+      const existingItem = cart.find(cartItem => cartItem.id === item.id);
+      
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({
+          id: item.id,
+          name: item.hindiName,
+          price: item.price,
+          quantity: 1
+        });
+      }
+      
+      saveCart();
+      updateCartUI();
+      
+      // Show confirmation animation
+      cartCount.style.transform = 'scale(1.5)';
+      setTimeout(() => {
+        cartCount.style.transform = 'scale(1)';
+      }, 300);
+    }
+
+    // Remove item from cart
+    function removeFromCart(itemId) {
+      cart = cart.filter(item => item.id !== itemId);
+      saveCart();
+      updateCartUI();
+    }
+
+    // Update item quantity in cart
+    function updateQuantity(itemId, change) {
+      const item = cart.find(item => item.id === itemId);
+      
+      if (item) {
+        item.quantity += change;
+        
+        if (item.quantity <= 0) {
+          removeFromCart(itemId);
+        } else {
+          saveCart();
+          updateCartUI();
+        }
+      }
+    }
+
+    // Calculate total price
+    function calculateTotal() {
+      return cart.reduce((total, item) => {
+        const price = parseInt(item.price.replace('₹', '').replace(',', ''));
+        return total + (price * item.quantity);
+      }, 0);
+    }
+
+    // Update cart UI
+    function updateCartUI() {
+      // Update cart count
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      cartCount.textContent = totalItems;
+      
+      // Show/hide empty cart message
+      if (cart.length === 0) {
+        cartEmpty.style.display = 'block';
+      } else {
+        cartEmpty.style.display = 'none';
+      }
+      
+      // Update cart items
+      cartItems.innerHTML = '';
+      cart.forEach(item => {
+        const price = parseInt(item.price.replace('₹', '').replace(',', ''));
+        const itemElement = document.createElement('div');
+        itemElement.className = 'cart-item';
+        itemElement.innerHTML = `
+          <div class="item-info">
+            <div class="item-name">${item.name}</div>
+            <div class="item-price">${item.price} × ${item.quantity} = ₹${price * item.quantity}</div>
+          </div>
+          <div class="item-quantity">
+            <button class="quantity-btn" onclick="updateQuantity(${item.id}, -1)">-</button>
+            <span class="quantity">${item.quantity}</span>
+            <button class="quantity-btn" onclick="updateQuantity(${item.id}, 1)">+</button>
+            <button class="remove-item" onclick="removeFromCart(${item.id})">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </div>
+        `;
+        cartItems.appendChild(itemElement);
+      });
+      
+      // Update total
+      cartTotal.textContent = `₹${calculateTotal()}`;
+    }
+
+    // Generate WhatsApp message
+    function generateWhatsAppMessage() {
+      let message = "Hello! I would like to place an order:\n\n";
+      
+      cart.forEach(item => {
+        message += `${item.name} - ${item.quantity} x ${item.price}\n`;
+      });
+      
+      message += `\nTotal: ₹${calculateTotal()}\n\nThank you!`;
+      
+      return encodeURIComponent(message);
+    }
+
+    // Event listeners
+    cartButton.addEventListener('click', () => {
+      cartModal.classList.add('open');
+    });
+    
+    closeCart.addEventListener('click', () => {
+      cartModal.classList.remove('open');
+    });
+    
+    clearCart.addEventListener('click', () => {
+      cart = [];
+      saveCart();
+      updateCartUI();
+    });
+    
+    whatsappOrder.addEventListener('click', () => {
+      if (cart.length === 0) {
+        alert('Your cart is empty!');
+        return;
+      }
+      
+      const phoneNumber = "919284969878"; // Replace with your WhatsApp business number
+      const message = generateWhatsAppMessage();
+      window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+    });
+
+    // Close modal when clicking outside
+    cartModal.addEventListener('click', (e) => {
+      if (e.target === cartModal) {
+        cartModal.classList.remove('open');
+      }
+    });
+
+    // Menu rendering functions
+    const menuGrid = document.getElementById('menuGrid');
+    const searchInput = document.getElementById('search');
+    const tabs = document.querySelectorAll('.tab');
+
+    function render(items){
+      menuGrid.innerHTML = items.map(i=>`
+        <article class="card" data-cat="${i.cat}">
+          <div class="thumb"><img src="${i.img}" alt="${i.hindiName}" loading="lazy"></div>
+          <div class="info">
+            <h3 class="dish">${i.hindiName}</h3>
+            <div class="dish-english">${i.englishName}</div>
+            <div class="desc">${i.desc}</div>
+            <div class="meta-row">
+              <div class="tags">${i.tags.map(t=>`<span class="pill">${t}</span>`).join('')}</div>
+              <div class="price">${i.price}</div>
+            </div>
+            <div style="margin-top:12px">
+              <button class="btn-primary" onclick="addItemToCartById(${i.id})">Add to Cart</button>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    // Function to add item to cart by ID
+    function addItemToCartById(id){
+      const item = data.find(d => d.id === id);
+      if (item) {
+        addItemToCart(item);
+      }
+    }
+
+    // initial render
+    render(data);
+    initCart();
+
+    // search
+    searchInput.addEventListener('input', ()=>{
+      const q = searchInput.value.trim().toLowerCase();
+      const filtered = data.filter(d=> 
+        (d.hindiName + ' ' + d.englishName + ' ' + d.desc + ' ' + d.tags.join(' ')).toLowerCase().includes(q) 
+      );
+      render(filtered);
+    });
+
+    // tabs
+    tabs.forEach(t=>t.addEventListener('click', ()=>{
+      tabs.forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      const cat = t.getAttribute('data-cat');
+      if(cat==='all'){ render(data); return; }
+      render(data.filter(d=>d.cat===cat));
+    }));
+  </script>
+</body>
+</html>
